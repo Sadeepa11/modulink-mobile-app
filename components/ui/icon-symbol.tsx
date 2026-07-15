@@ -1,29 +1,47 @@
-// Fallback for using MaterialIcons on Android and web.
+// Cross-platform icon component using MaterialIcons (works on Android, iOS, Web)
+// We do NOT use expo-symbols here because it is iOS-only (SF Symbols)
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
 import { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
-type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
-type IconSymbolName = keyof typeof MAPPING;
-
-/**
- * Add your SF Symbols to Material Icons mappings here.
- * - see Material Icons in the [Icons Directory](https://icons.expo.fyi).
- * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
- */
+// All icon names used in the app mapped to Material Icons names
+// Add more mappings here as you add new icons
 const MAPPING = {
   'house.fill': 'home',
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
-} as IconMapping;
+  'message.fill': 'chat',
+  'person.fill': 'person',
+  'photo.fill': 'photo',
+  'magnifyingglass': 'search',
+  'bell.fill': 'notifications',
+  'gear': 'settings',
+  'plus': 'add',
+  'xmark': 'close',
+  'arrow.left': 'arrow-back',
+  'camera.fill': 'camera-alt',
+  'heart.fill': 'favorite',
+  'heart': 'favorite-border',
+  'bubble.left.fill': 'chat-bubble',
+  'person.2.fill': 'group',
+  'ellipsis': 'more-horiz',
+  'checkmark': 'check',
+  'checkmark.circle.fill': 'check-circle',
+  'info.circle': 'info',
+  'pencil': 'edit',
+} as const;
+
+// IconSymbolName is any key in our MAPPING object
+export type IconSymbolName = keyof typeof MAPPING;
 
 /**
- * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
- * This ensures a consistent look across platforms, and optimal resource usage.
- * Icon `name`s are based on SF Symbols and require manual mapping to Material Icons.
+ * IconSymbol - A unified icon component for all platforms.
+ * Uses Material Icons everywhere for consistency.
+ *
+ * How to use:
+ *   <IconSymbol name="house.fill" size={24} color="#000" />
  */
 export function IconSymbol({
   name,
@@ -35,7 +53,14 @@ export function IconSymbol({
   size?: number;
   color: string | OpaqueColorValue;
   style?: StyleProp<TextStyle>;
-  weight?: SymbolWeight;
+  weight?: string; // accepted but not used (iOS-only concept)
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  return (
+    <MaterialIcons
+      color={color}
+      size={size}
+      name={MAPPING[name] as ComponentProps<typeof MaterialIcons>['name']}
+      style={style}
+    />
+  );
 }
